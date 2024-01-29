@@ -10,21 +10,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.statemanagementmistake.ui.theme.StateManagementMistakeTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,29 +32,32 @@ class MainActivity : ComponentActivity() {
                 val state = _state.collectAsState()
                 val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-                fun increment() {
-                    // BAD - doesn't get the current value before updating, will cause a race condition
-                    coroutineScope.launch {// count == 0
+                fun increment2Times() {
+                    // BAD - doesn't get the current value before updating,
+                    //       will cause a race condition.
+                    coroutineScope.launch {// count == 0, same as below ⬇️
                         _state.value = _state.value.copy(count = _state.value.count + 1)
                     }
-                    coroutineScope.launch {// count == 0
+                    coroutineScope.launch {// count == 0, same as above ⬆️
                         _state.value = _state.value.copy(count = _state.value.count + 1)
                     }
 
-                    // SOLUTION
-                    if(true){
-                        // GOOD - gets the current value before updating, no race condition is possible
+                    /*
+                        // SOLUTION
+                        // GOOD - gets the current value before updating,
+                        //        no race condition is possible.
                         coroutineScope.launch {
-                            _state.update { // gets the current value here before updating
+                            _state.update { // gets the current value here before updating 😀
                                 it.copy(count = it.count + 1)
                             }
                         }
                         coroutineScope.launch {
-                            _state.update { // gets the current value here before updating
+                            _state.update { // gets the current value here before updating 😃
                                 it.copy(count = it.count + 1)
                             }
                         }
                     }
+                    */
                 }
 
                 Surface(
@@ -78,14 +75,13 @@ class MainActivity : ComponentActivity() {
                         )
 
                         Button(
-                            modifier = Modifier,
                             onClick = {
                                 repeat(100) {
-                                    increment()
+                                    increment2Times()
                                 }
                             }
                         ) {
-                            Text("Increment")
+                            Text("Increment +200")
                         }
                     }
                 }
