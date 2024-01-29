@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                 val state = _state.collectAsState()
                 val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-                fun increment2Times() {
+                fun increment2TimesBAD() {
                     // BAD - doesn't get the current value before updating,
                     //       will cause a race condition.
                     coroutineScope.launch {// count == 0, same as below ⬇️
@@ -41,23 +41,21 @@ class MainActivity : ComponentActivity() {
                     coroutineScope.launch {// count == 0, same as above ⬆️
                         _state.value = _state.value.copy(count = _state.value.count + 1)
                     }
+                }
 
-                    /*
-                        // SOLUTION
-                        // GOOD - gets the current value before updating,
-                        //        no race condition is possible.
-                        coroutineScope.launch {
-                            _state.update { // gets the current value here before updating 😀
-                                it.copy(count = it.count + 1)
-                            }
-                        }
-                        coroutineScope.launch {
-                            _state.update { // gets the current value here before updating 😃
-                                it.copy(count = it.count + 1)
-                            }
+                fun increment2TimesGOOD() {
+                    // GOOD - gets the current value before updating,
+                    //        no race condition is possible.
+                    coroutineScope.launch {
+                        _state.update { // gets the current value here before updating 😀
+                            it.copy(count = it.count + 1)
                         }
                     }
-                    */
+                    coroutineScope.launch {
+                        _state.update { // gets the current value here before updating 😃
+                            it.copy(count = it.count + 1)
+                        }
+                    }
                 }
 
                 Surface(
@@ -71,13 +69,13 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Text(
                             text = "Count= ${state.value.count}",
-                            modifier = Modifier
                         )
 
                         Button(
                             onClick = {
                                 repeat(100) {
-                                    increment2Times()
+                                    increment2TimesBAD()
+                                    // increment2TimesGOOD()
                                 }
                             }
                         ) {
