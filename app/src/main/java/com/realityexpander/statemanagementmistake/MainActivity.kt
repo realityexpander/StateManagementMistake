@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
                 val _state = MutableStateFlow(MyState(0))
                 val state = _state.collectAsState()
+//                 val coroutineScope = CoroutineScope(Dispatchers.Main)
                 val coroutineScope = CoroutineScope(Dispatchers.IO)
 
                 fun increment2TimesBAD() {
@@ -74,8 +75,8 @@ class MainActivity : ComponentActivity() {
                         Button(
                             onClick = {
                                 repeat(100) {
-                                    increment2TimesBAD()
-                                    // increment2TimesGOOD()
+//                                    increment2TimesBAD()
+                                     increment2TimesGOOD()
                                 }
                             }
                         ) {
