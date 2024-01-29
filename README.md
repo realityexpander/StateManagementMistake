@@ -1,4 +1,4 @@
-## Biggest State Management Mistake
+## Common State Management Mistake in Compose
 
 ![Bad:Good State Mgmt for Twitter](https://github.com/realityexpander/StateManagementMistake/assets/5157474/a3a9702b-6536-403e-9e39-3fbd9f96ccf6)
 
